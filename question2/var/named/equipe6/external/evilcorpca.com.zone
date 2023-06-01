@@ -1,0 +1,39 @@
+$TTL 3D
+@       IN      SOA     ns1.evilcorpca.com. DNSMaster.evilcorpca.com. (
+                        2023053101  ; Serial, YYYYMMDDNN
+                        3D          ; Refresh, (3 jours)
+                        1H          ; Retry, (1 heure)
+                        1W          ; Expire, (1 semaine)
+                        1D )        ; Minimum TTL, (1 journée)
+
+; Serveurs Noms
+@       IN      NS      ns1.evilcorpca.com.
+@       IN      NS      ns2.evilcorpca.com.
+
+; Site Principal
+@       IN      A       199.48.22.99
+www     IN      CNAME   @
+
+; DMZ et Passerelle de Paiement
+secure  IN      A       192.168.100.100
+passerelle-paiement IN  A   199.48.22.100
+
+; Serveur courriel
+@       IN      MX      10 courriel.evilcorpca.com.
+@       IN      MX      20 courriel.evilcorp.ca.
+courriel    IN      A       199.48.22.55
+
+; Courrier
+webmail         IN      A       199.48.22.36
+courrielweb     IN      CNAME   webmail
+
+; VPN 
+vpn     IN      A       199.48.22.77
+
+; Services internes
+mariadb         IN      A       172.16.15.15
+gateway         IN      A       172.16.15.1
+
+; Serveurs inventés
+additional1     IN      A       199.48.22.111
+additional2     IN      A       199.48.22.222
