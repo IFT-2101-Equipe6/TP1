@@ -1,0 +1,15 @@
+$TTL 3D
+@ IN SOA ns1.evilcorpca.com. DNSmaster.evilcorpca.com. ( 
+                            2023060201      ; serial 
+                            3H              ; refresh 
+                            15M             ; retry          
+                            1W              ; expiration          
+                            3D              ; minimum TTL
+                        )
+
+      IN NS ns1.evilcorpca.com.
+      IN NS ns1.evilcorpca.com.
+
+
+15 IN PTR maria.evilcorpca.local. 
+1  IN PTR gateway.evilcorpca.local. 

@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 #*************************************************************
 # Fichier   : MonApp.sh 
 # Projet    : Travail Pratique 1 
@@ -10,7 +9,7 @@
 # École     : Université Laval
 # Session   : Été 2023
 # Notes     : 
-#************************************************************* 
+#*************************************************************
 
 #******************************************
 # Fonction : ShowMainMenu
@@ -19,9 +18,8 @@
 #******************************************
 function ShowMainMenu() {
     clear
-    
     echo "Équipe 6"
-    echo -e "1: Système \n2: Réseau \n3: Disque \n4: Menu du Chef \n5: Quitter"
+    echo -e "1: Système \n2: Réseau \n3: Disque \n4: Autre \n5: Quitter"
 
     read -n 1 mainMenuInput
 
@@ -29,7 +27,7 @@ function ShowMainMenu() {
         1) ShowSystemMenu ;;
         2) ShowNetworkMenu ;;
         3) ShowDiskMenu ;;
-        4) ShowChefMenu ;;
+        4) ShowOtherMenu ;;
         5) Exit ;;
         *) ShowMainMenu ;;
     esac
@@ -41,7 +39,7 @@ function ShowMainMenu() {
 # Notes    :
 #******************************************
 function WaitForAnyInput() {
-    echo -e "\nAppuyer sur une touche pour revenir au menu précédent..."
+    echo -e "\nAppuyer sur une touche..."
     while true
     do
         read -n 1 -t 0.1 exitInput
@@ -117,9 +115,9 @@ function ShowSystemMenu() {
     echo "Système"
     echo -e "1: top \n2: Processeur \n3: Fichiers ouverts \n4: Retour au menu principal"
 
-    read topInput
+    read input
 
-    splits=(${topInput// / })
+    splits=(${input// / })
 
     menu="${splits[0]}"
     arg="${splits[1]}"
@@ -143,9 +141,9 @@ function ShowNetworkMenu() {
     echo "Sous-menu Réseau :"
     echo -e "1: Socket ouverts (distant) \n2: Page distante \n3: Socket en écoute (LISTENING) localement \n4: Connexions réseau \n5: Retour au menu principal"
 
-    read topInput
+    read input
 
-    splits=(${topInput// / })
+    splits=(${input// / })
 
     menu="${splits[0]}"
     arg="${splits[1]}"
@@ -166,7 +164,7 @@ function ShowNetworkMenu() {
 # Notes    :
 #******************************************
 
-ShowDistantOpenSockets() {
+function ShowDistantOpenSockets() {
     clear
 
     read -p "Entrez une adresse IP : " ip
@@ -195,7 +193,7 @@ ShowDistantOpenSockets() {
 # Notes    :
 #******************************************
 
-ShowDistantPage() {
+function ShowDistantPage() {
     clear
     read -p "Entrez une adresse IP : " ip
     curl $ip
@@ -210,7 +208,7 @@ ShowDistantPage() {
 # Notes    :
 #******************************************
 
-ShowSocketOnListening() {
+function ShowSocketOnListening() {
     clear
     netstat -tuln
     
@@ -223,7 +221,7 @@ ShowSocketOnListening() {
 # Objectif : Affiche les connections du réseau 
 # Notes    :
 #******************************************
-ShowNetworkConnections() {
+function ShowNetworkConnections() {
     while true
     do
     	clear
@@ -248,7 +246,7 @@ ShowNetworkConnections() {
 function ShowUtilisationsMenu() {
     clear
 
-    find / -type f -size +100M
+    find ~ -type f -size +100M
 
     WaitForAnyInput
     ShowDiskMenu
@@ -277,7 +275,7 @@ function ShowSearchMenu() {
     clear
     pattern=$1
 
-    find / -type f -print | grep "$pattern"
+    find ~ -type f -print | grep "$pattern"
 
     WaitForAnyInput
     ShowDiskMenu
@@ -285,7 +283,7 @@ function ShowSearchMenu() {
 
 #******************************************
 # Fonction : ShowDiskMenu
-# Objectif :  Affiche le menu Disque
+# Objectif : Affiche le menu Disque
 # Notes    :
 #******************************************
 function ShowDiskMenu() {
@@ -293,9 +291,9 @@ function ShowDiskMenu() {
     echo "Disque"
     echo -e "1: Sur-utilisation \n2: Fichiers \n3: Recherche \n4: Retour au menu principal"
 
-    read topInput
+    read input
 
-    splits=(${topInput// / })
+    splits=(${input// / })
 
     menu="${splits[0]}"
     arg="${splits[1]}"
@@ -310,86 +308,177 @@ function ShowDiskMenu() {
 }
 
 #******************************************
-# Fonction :  ShowChefMenu
+# Fonction :  ShowOtherMenu
 # Objectif :  Affiche le sous-menu personnalisé
 # Notes    :
 #******************************************
-ShowChefMenu() {
+function ShowOtherMenu() {
     clear
     echo "Chef:"
-    echo -e "1: Système et réseau \n2: Recherche récursive \n3: Espace Disque \n4: Retour au menu principal"
+    echo -e "1 [int]: Facteurs \n2: Calendrier \n3: Utilisateur actuel \n4 [file]: En-tête Fichier \n5: Surprise!!! \n5: Retour au menu principal"
 
-    read -p "Choisissez une option : " selectedOption
+    read -p "Choisissez une option : " input
 
-    case $selectedOption in
-        1) ShowSystemAndNetworkInfo;;
-        2) ShowRecursiveSearch;;
-        3) ShowDiskSpaceUsage;;
-        4) ShowMainMenu ;;
-        *) ShowChefMenu;;
+    splits=(${input// / })
+
+    menu="${splits[0]}"
+    arg="${splits[1]}"
+
+    case $menu in
+        fact) ShowFactorMenu $arg;;
+        2) ShowCalendarMenu;;
+        3) ShowCurrentUserMenu;;
+        5) ShowSurpriseMenu ;;
+        4) WriteFileHeader $arg;;
+        6) ShowMainMenu ;;
+        *) ShowOtherMenu;;
     esac
 }
 
 #******************************************
-# Fonction : ShowSystemAndNetworkInfo
-# Objectif : Afficher les informations système et réseau
+# Fonction : ShowFactorMenu
+# Objectif : Afficher les facteurs du nombre passé en paramètre
 # Notes    :
 #******************************************
-
-ShowSystemAndNetworkInfo() {
+function ShowFactorMenu() {
     clear
-    echo "Infos du système :"
-    lscpu
-    echo ""
-    echo "Infos du réseau :"
-    ip a
+    valueEntered=$1
+    echo "$valueEntered"
+
+    if [ -z "$valueEntered" ]
+    then
+        echo "Aucune valeur passée"
+    else
+        factor "$valueEntered"
+    fi
+
     WaitForAnyInput
-    ShowChefMenu
+    ShowOtherMenu
 }
 
 #******************************************
-# Fonction : ShowActiveConnexions
-# Objectif : Afficher les connexions actives au réseau
+# Fonction : ShowCalendarMenu
+# Objectif : Affiche le calendrier du mois en cours
 # Notes    :
 #******************************************
 
-ShowActiveConnexions() {
-  echo "Connexions actives :"
-  netstat -natp
+function ShowCalendarMenu() {
+    clear
+
+    cal
+
+    WaitForAnyInput
+    ShowOtherMenu
+}
+
+#******************************************
+# Fonction : ShowCurrentUserMenu
+# Objectif : Affiche des informations sur l'utilisateur actuel
+# Notes    :
+#******************************************
+function ShowCurrentUserMenu() {
+    clear
+
+    w
+
+    WaitForAnyInput
+    ShowOtherMenu
+}
+
+
+#******************************************
+# Fonction : WriteFileHeader
+# Objectif : Ajoutes une en-tête de remise à un fichier passé en paramètre
+# Notes    :
+#******************************************
+
+WriteFileHeader() {
+  clear
+  local fileName="$1"
+
+  # Vérifier si le fichier existe
+  if [[ ! -f "$fileName" ]]; then
+    echo "Le fichier '$fileName' n'existe pas."
+    sleep 1
+    clear
+    ShowOtherMenu 
+  fi
+
+  # Demander les informations pour l'en-tête
+  echo "Entrez la description de ce fichier :"
+  read -r fileDescription
+
+  echo "Entrez le ou les auteurs (séparés par '&') :"
+  read -r fileAuthors
+
+  echo "Entrez le numéro d'équipe (laissez vide si non applicable) :"
+  read -r teamNumber
+
+  echo "Entrez le nom du travail (ex: 'TP1') :"
+  read -r assignmentName
+
+  # Création du contenu de l'en-tête
+  local fileHeader="\
+#*************************************************************
+# Fichier   : $fileName 
+# Description : $fileDescription
+# Projet    : $assignmentName 
+# Auteur(s) : $fileAuthors
+# Équipe    : $teamNumber 
+# Cours     : IFT-2101 - Protocoles et technologies Internet
+# École     : Université Laval
+# Session   : Été 2023
+# Notes     : 
+#*************************************************************
+"
+# Création d'un fichier temporaire comme 'backup'
+  local tempFile=$(mktemp)
+
+  # Copier le contenu original dans le fichier temporaire
+  cat "$fileName" > "$tempFile"
+
+  # Création du nouveau contenu avec l'en-tête + le contenu d'origine
+  local newFile=$(cat <<EOF
+$fileHeader
+
+$(cat "$tempFile")
+EOF
+)
+
+  # Mettre à jour le fichier d'origine
+  echo "$newFile" > "$fileName"
+
+  # Supprimer le fichier temporaire
+  rm "$tempFile"
+
+  # Demandé à l'utilisateur s'il veut afficher le contenu du fichier
+  echo "Voulez-vous afficher le contenu du fichier? (y/N)"
+  read -r showFileContent
+
+  if [[ "$showFileContent" =~ ^[Yy]$ ]]; then
+    cat "$fileName"
+  fi
+  
+  sleep 2 
   WaitForAnyInput
-  ShowChefMenu
+  ShowOtherMenu
 }
 
+
 #******************************************
-# Fonction : ShowRecursiveSearch
-# Objectif : Effectuer une recherche récursive dans les fichiers
+# Fonction : ShowSurpriseMenu
+# Objectif : Ouvre une page dans le navigateur sur une vidéo populaire
 # Notes    :
 #******************************************
-
-ShowRecursiveSearch() {
+function ShowSurpriseMenu() {
     clear
-    read -p "Entrez un terme de recherche : " searchTerm
-    echo "Résultats :"
-    grep -r "$searchTerm" *
-    WaitForAnyInput
-    ShowChefMenu
-}
+    echo "You've been Rickrolled!"
 
-#******************************************
-# Fonction : ShowDiskSpaceUsage
-# Objectif : Affiche l'utilisation du disque et les fichiers de plus de 1 Go
-# Notes    :
-#******************************************
+    sleep 1
+    xdg-open "https://youtu.be/dQw4w9WgXcQ?autoplay=1" 2>/dev/null
 
-ShowDiskSpaceUsage() {
-    clear
-    echo "Utilisation du disque :"
-    df -h
-    echo ""
-    echo "Fichiers gourmands (> 1 Go) :"
-    find / -type f -size +1G
     WaitForAnyInput
-    ShowChefMenu
+    ShowOtherMenu
 }
 
 #******************************************
