@@ -10,5 +10,5 @@ $TTL 3D
       IN NS ns1.evilcorpca.com.
       IN NS ns1.evilcorpca.com.
 
-maria IN A 10.10.0.15
-gateway IN A 10.10.0.1
+maria IN A 10.10.1.15
+gateway IN A 10.10.1.0

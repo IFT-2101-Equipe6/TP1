@@ -8,6 +8,6 @@ $TTL 3D
                         )
 
       IN NS ns1.evilcorpca.com.
-      IN NS ns1.evilcorpca.com.
+      IN NS ns2.evilcorpca.com.
 
 1 IN PTR  ns1.evilcorpca.com. 
